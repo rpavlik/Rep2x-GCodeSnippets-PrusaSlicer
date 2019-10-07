@@ -2,6 +2,7 @@ bundle := Slic3r-configBundles/Slic3r_config_bundle.ini
 custom_bundle := Slic3r-configBundles/custom.ini
 
 SECTION_DIR := Slic3r-configBundles/sections
+QUIET ?= @
 
 printers := \
 	$(SECTION_DIR)/printer_Rep2x_dual_material_LR.ini \
@@ -18,27 +19,31 @@ sections := \
 	$(SECTION_DIR)/presets.ini
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
-INJECT_GCODE_CMD = python3 $(GCODE_SCRIPT) $1
 
 all: $(bundle)
-.PHONY: all clean
 clean:
 	-rm -f $(bundle) $(custom_bundle)
+.PHONY: all clean
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
-	cat $(sections) > $@
+	@echo "Generating bundle: $@"
+	$(QUIET)cat $(sections) > $@
 
 
-.PHONY: customized
-customized:$(sections) Makefile
 ifneq (,$(strip $(SCRIPT_PATH)))
-	cat $(sections) | sed 's:/You-need-to-update-print-configs/specify-path-to/make_fcp_x3g:$(strip $(SCRIPT_PATH)):' > $(custom_bundle)
-else
-	@echo "Must specify SCRIPT_PATH to build customized!" && exit 1
+# Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
+customized: $(bundle) Makefile
+	@echo "Generating bundle with customized post-process path: $(custom_bundle)"
+	$(QUIET)cat $< | sed 's:/You-need-to-update-print-configs/specify-path-to/make_fcp_x3g:$(strip $(SCRIPT_PATH)):' > $(custom_bundle)
+all: customized
+.PHONY: customized
 endif
 
+
+# Inject GCode into config sections
 GCODES := $(wildcard Slic3r-GCode/*.gcode)
 
 $(printers) : $(SECTION_DIR)/printer_%.ini : $(GCODE_SCRIPT) $(GCODES)
-	$(call INJECT_GCODE_CMD,$(@F))
+	@echo "Injecting GCode snippets into: $@"
+	$(QUIET)python3 $(GCODE_SCRIPT) $(@F)
