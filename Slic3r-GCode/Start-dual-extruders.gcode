@@ -1,5 +1,6 @@
 ;- - - Custom G-code for dual extruder printing with FlashForge Creator Pro - - -
 ;- - - by DrLex; 2016/09-2019/07. Released under Creative Commons Attribution License. - - -
+;- - - Modified by rpavlik for Replicator 2x; 2019/10 - - -
 ; IMPORTANT: ensure your home offsets are correctly set. The Y home offset is correct if
 ;   the initial extrusion performed by this code is at 3mm from the front edge of the bed.
 ; IMPORTANT: ensure "Use relative E distances" is enabled in Printer settings.
@@ -157,7 +158,7 @@ G90; set positioning to absolute
 M83; use relative E coordinates
 G1 Z20 F1500; move Z to waiting height
 G1 X140 Y65 F1500; do a slow small move to allow acceleration to be gently initialised
-G1 X70 Y-83 F8400; move to waiting position (front right corner of print bed), also makes room for the tool change
+G1 X70 Y-83 F5400; move to waiting position (front right corner of print bed), also makes room for the tool change
 ; In theory, Sailfish should combine the T1 with the next move. I have tried to make this work many times and I found it extremely unreliable, therefore I force an explicit tool swap as follows.
 G1 F4000; set speed for tool change, keep it low because not accelerated.
 T1; initialise the left extruder first, this minimises tool changes, assuming the print will start with the right extruder.
@@ -182,7 +183,7 @@ G1 X-100 F4000; wipe across the line (X direction)
 G1 F4000; set speed for tool change, keep it low because not accelerated.
 T0; switch back to right extruder.
 G4 P0; flush pipeline
-G1 X-70 Y-72 F8400; move to front left corner of bed
+G1 X-70 Y-72 F5400; move to front left corner of bed
 G1 X121 E24 F2000; extrude a line of filament across the front edge of the bed using right extruder
 ; Again extrude a little beyond the bed.
 G1 Y-69 F2000
@@ -190,7 +191,7 @@ G1 X108 Y-72 F4000; cross the extruded line to close the loop
 G1 X100 F4000; wipe across the line (X direction)
 G1 X90 Y-77 F6000; Move back for an additional wipe (Y direction)
 ;G92 E-0.6; This no longer works with relative E. The purpose was to compensate for the inexplicable but consistent under-extrusion that occurs at the start of the skirt. This compensation must now be done in a post-processing script.
-G1 F8400; in case Slic3r would not override this, ensure fast travel to first print move
+G1 F6400; in case Slic3r would not override this, ensure fast travel to first print move
 M73 P1 ;@body (notify GPX body has started)
 ;- - - End custom G-code for dual extruder printing - - -
 

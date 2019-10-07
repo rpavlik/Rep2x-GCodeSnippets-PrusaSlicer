@@ -1,5 +1,6 @@
 ;- - - Custom G-code for right extruder printing with FlashForge Creator Pro - - -
 ;- - - by DrLex; 2016/09-2019/04. Released under Creative Commons Attribution License. - - -
+;- - - Modified by rpavlik for Replicator 2x; 2019/10 - - -
 ; IMPORTANT: ensure your home offsets are correctly set. The Y home offset is correct if
 ;   the initial extrusion performed by this code is at 3mm from the front edge of the bed.
 ; IMPORTANT: ensure "Use relative E distances" is enabled in Printer settings.
@@ -135,7 +136,7 @@ G90; set positioning to absolute
 M83; use relative E coordinates
 G1 Z20 F1500; move Z to waiting height
 G1 X140 Y65 F1500; do a slow small move to allow acceleration to be gently initialised
-G1 X-70 Y-83 F8400; move to waiting position (front left corner of print bed)
+G1 X-76 Y-83 F5400; move to waiting position (front left corner of print bed)
 M18 A B; disable extruder steppers while heating
 M190 S[first_layer_bed_temperature]; Wait for bed to heat up. Leave extruder at 140C, to avoid cooking the filament.
 M104 S[first_layer_temperature] T0; set nozzle heater to first layer temperature
