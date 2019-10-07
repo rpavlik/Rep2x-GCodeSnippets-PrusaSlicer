@@ -136,7 +136,7 @@ G90; set positioning to absolute
 M83; use relative E coordinates
 G1 Z20 F1500; move Z to waiting height
 G1 X140 Y65 F1500; do a slow small move to allow acceleration to be gently initialised
-G1 X70 Y-77 F5400; move to waiting position (front right corner of print bed), also makes room for the tool change
+G1 X70 Y-75 F5400; move to waiting position (front right corner of print bed), also makes room for the tool change
 ; In theory, Sailfish should combine the T1 with the next move. I have tried to make this work many times and I found it extremely unreliable, therefore I force an explicit tool swap as follows.
 G1 F4000; set speed for tool change, keep it low because not accelerated.
 T1; switch to the left extruder
@@ -154,7 +154,7 @@ G1 X-121 E24 F2000; extrude a line of filament across the front edge of the bed 
 G1 Y-71 F2000
 G1 X-108 Y-74 F4000; cross the extruded line to close the loop
 G1 X-100 F4000; wipe across the line (X direction)
-G1 X-90 Y-79 F6000; Move back for an additional wipe (Y direction)
+G1 X-90 Y-75 F6000; Move back for an additional wipe (Y direction)
 ;G92 E-0.6; This no longer works with relative E. The purpose was to compensate for the inexplicable but consistent under-extrusion that occurs at the start of the skirt. This compensation must now be done in a post-processing script.
 G1 F8400; in case Slic3r would not override this, ensure fast travel to first print move
 M73 P1 ;@body (notify GPX body has started)
