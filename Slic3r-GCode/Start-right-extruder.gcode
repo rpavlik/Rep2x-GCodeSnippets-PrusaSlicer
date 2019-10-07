@@ -136,7 +136,7 @@ G90; set positioning to absolute
 M83; use relative E coordinates
 G1 Z20 F1500; move Z to waiting height
 G1 X140 Y65 F1500; do a slow small move to allow acceleration to be gently initialised
-G1 X-76 Y-83 F5400; move to waiting position (front left corner of print bed)
+G1 X-76 Y-77 F5400; move to waiting position (front left corner of print bed)
 M18 A B; disable extruder steppers while heating
 M190 S[first_layer_bed_temperature]; Wait for bed to heat up. Leave extruder at 140C, to avoid cooking the filament.
 M104 S[first_layer_temperature] T0; set nozzle heater to first layer temperature

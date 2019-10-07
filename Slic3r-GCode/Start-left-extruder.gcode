@@ -136,7 +136,7 @@ G90; set positioning to absolute
 M83; use relative E coordinates
 G1 Z20 F1500; move Z to waiting height
 G1 X140 Y65 F1500; do a slow small move to allow acceleration to be gently initialised
-G1 X70 Y-83 F5400; move to waiting position (front right corner of print bed), also makes room for the tool change
+G1 X70 Y-77 F5400; move to waiting position (front right corner of print bed), also makes room for the tool change
 ; In theory, Sailfish should combine the T1 with the next move. I have tried to make this work many times and I found it extremely unreliable, therefore I force an explicit tool swap as follows.
 G1 F4000; set speed for tool change, keep it low because not accelerated.
 T1; switch to the left extruder
