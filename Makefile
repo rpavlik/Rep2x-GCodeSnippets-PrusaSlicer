@@ -1,4 +1,5 @@
 bundle := Slic3r-configBundles/Slic3r_config_bundle.ini
+custom_bundle := Slic3r-configBundles/custom.ini
 
 SECTION_DIR := Slic3r-configBundles/sections
 
@@ -20,12 +21,22 @@ GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
 INJECT_GCODE_CMD = python3 $(GCODE_SCRIPT) $1
 
 all: $(bundle)
+.PHONY: all clean
 clean:
-	-rm -f $(bundle)
+	-rm -f $(bundle) $(custom_bundle)
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
 	cat $(sections) > $@
+
+
+.PHONY: customized
+customized:$(sections) Makefile
+ifneq (,$(strip $(SCRIPT_PATH)))
+	cat $(sections) | sed 's:/You-need-to-update-print-configs/specify-path-to/make_fcp_x3g:$(strip $(SCRIPT_PATH)):' > $(custom_bundle)
+else
+	@echo "Must specify SCRIPT_PATH to build customized!" && exit 1
+endif
 
 GCODES := $(wildcard Slic3r-GCode/*.gcode)
 
