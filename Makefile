@@ -5,6 +5,9 @@ SECTION_DIR := Slic3r-configBundles/sections
 PLACEHOLDER_SCRIPT := /You-need-to-update-print-configs/specify-path-to/make_fcp_x3g
 QUIET ?= @
 
+# If found, include config.mk for local settings
+-include config.mk
+
 printers := \
 	$(SECTION_DIR)/printer_Rep2x_dual_material_LR.ini \
 	$(SECTION_DIR)/printer_Rep2x_single_material_L.ini \
@@ -46,6 +49,7 @@ help:
 	@echo "Note:"
 	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
 	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
+	@echo "You can do this on the command line, or (preferably) in a config.mk file."
 	@echo "Pass QUIET= on the command line to show all commands being executed."
 
 .PHONY: all clean fixup help
@@ -59,7 +63,7 @@ $(bundle): $(sections) Makefile
 ifneq (,$(strip $(SCRIPT_PATH)))
 # Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
 customized: $(bundle) Makefile
-	@echo "Generating bundle with customized post-process path: $(custom_bundle)"
+	@echo "Generating bundle with customized post-process path, etc: $(custom_bundle)"
 	$(QUIET)cat $< | \
 		sed \
 		-e 's:$(PLACEHOLDER_SCRIPT):$(strip $(SCRIPT_PATH)):' \
