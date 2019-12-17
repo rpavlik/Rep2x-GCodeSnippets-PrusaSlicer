@@ -5,8 +5,6 @@ SECTION_DIR := Slic3r-configBundles/sections
 PLACEHOLDER_SCRIPT := /You-need-to-update-print-configs/specify-path-to/make_fcp_x3g
 QUIET ?= @
 
-DEDUPE_SCRIPT := python3 maintainer-scripts/dedupe.py
-
 # If found, include config.mk for local settings
 -include config.mk
 
@@ -20,9 +18,12 @@ printers := \
 # Not sure if it's required.
 sections := \
 	$(SECTION_DIR)/lead.ini \
+	$(SECTION_DIR)/print__rpavlik_base.ini \
+	$(SECTION_DIR)/print__rpavlik_PETG-base.ini \
 	$(SECTION_DIR)/print_rpavlik_PETG-medium.ini \
 	$(SECTION_DIR)/print_rpavlik_PETG-rough.ini \
 	$(SECTION_DIR)/print_rpavlik_PETG-rough_0.24_wip_1108.ini \
+	$(SECTION_DIR)/print__rpavlik_PLA-base.ini \
 	$(SECTION_DIR)/print_rpavlik_PLA-medium.ini \
 	$(SECTION_DIR)/print_rpavlik_PLA-rough.ini \
 	$(SECTION_DIR)/filament_PETG-AMZ-Basics-BLK.ini \
@@ -32,6 +33,8 @@ sections := \
 	$(SECTION_DIR)/presets.ini
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
+
+DEDUPE := python3 maintainer-scripts/dedupe.py
 
 all: $(bundle)
 clean:
@@ -43,23 +46,30 @@ fixup:
 		-e 's:print_host =.*:print_host = :' \
 		-e 's:printhost_apikey =.*:printhost_apikey = :' \
 		$(sections)
-	
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_base.ini print__rpavlik_PETG-base.ini
 
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-medium.ini
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough.ini
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough_0.24_wip_1108.ini
+	@echo "De-duplicating config settings from parent settings."
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PETG-base.ini
 
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_base.ini print__rpavlik_PLA-base.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-medium.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough_0.24_wip_1108.ini
 
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PLA-base.ini print_rpavlik_PLA-medium.ini
-	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PLA-base.ini print_rpavlik_PLA-rough.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PLA-base.ini
+
+	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini print_rpavlik_PLA-medium.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print_rpavlik_PLA-medium.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini print_rpavlik_PLA-rough.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print_rpavlik_PLA-rough.ini
+
+	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_single_material_L.ini
+	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_single_material_R.ini
+	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_dual_material_LR.ini
 
 help:
 	@echo "Targets:"
 	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
 	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
-	@echo "fixup: Remove personal data (postprocess script path, octoprint host and key) from section files"
+	@echo "fixup: Clean up sections: Remove personal data (postprocess script path, octoprint host and key), deduplicate, etc."
 	@echo "Note:"
 	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
 	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
