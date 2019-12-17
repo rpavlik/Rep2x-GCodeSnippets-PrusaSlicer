@@ -4,6 +4,7 @@ Based on the excellent work by dr-lex for the Flashforge Creator Pro - [See his 
 
 TL;DR instructions to use the scripted, custom config bundle generation:
 
+- In the configuration menu, choose "Take configuration snapshot" to back up your existing configs
 - Remove the existing profiles from your PrusaSlicer install, if you imported an earlier version of this bundle.
 - Copy `config.sample.mk` to `config.mk` and edit it to point to the right `make_fcp_x3g` script location (and optionally octoprint server)
 - Run `make`
