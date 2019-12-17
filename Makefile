@@ -46,8 +46,9 @@ sections := \
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
 
-
 DEDUPE := python3 maintainer-scripts/dedupe.py
+
+PRINTER_FILES := $(addprefix $(SECTION_DIR)/,$(printers))
 
 all: $(bundle)
 clean:
@@ -64,16 +65,19 @@ fixup:
 
 	@echo "De-duplicating config settings from parent settings."
 
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PETG-base.ini print__rpavlik_PLA-base.ini
+	$(QUIET)$(DEDUPE) \
+		--base print__rpavlik_base.ini \
+		--derived print__rpavlik_PETG-base.ini print__rpavlik_PLA-base.ini
 
-	# For multiple levels of inheritance, must go most-specialized to least-specialized
-	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini $(petg_settings)
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini $(petg_settings)
+	$(QUIET)$(DEDUPE) \
+		--base print__rpavlik_base.ini print__rpavlik_PETG-base.ini \
+		--derived $(petg_settings)
 
-	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini $(pla_settings)
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini $(pla_settings)
+	$(QUIET)$(DEDUPE) \
+		--base print__rpavlik_base.ini print__rpavlik_PLA-base.ini \
+		--derived $(pla_settings)
 
-	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini $(printers)
+	$(QUIET)$(DEDUPE) --base printer__Rep2x_base.ini --derived $(printers)
 
 help:
 	@echo "Targets:"
@@ -112,6 +116,6 @@ endif
 # Inject GCode into config sections
 GCODES := $(wildcard Slic3r-GCode/*.gcode)
 
-$(printers) : $(SECTION_DIR)/printer_%.ini : $(GCODE_SCRIPT) $(GCODES)
+$(PRINTER_FILES) : $(SECTION_DIR)/printer_%.ini : $(GCODE_SCRIPT) $(GCODES)
 	@echo "Injecting GCode snippets into: $@"
 	$(QUIET)python3 $(GCODE_SCRIPT) $(@F)
