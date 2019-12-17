@@ -5,6 +5,8 @@ SECTION_DIR := Slic3r-configBundles/sections
 PLACEHOLDER_SCRIPT := /You-need-to-update-print-configs/specify-path-to/make_fcp_x3g
 QUIET ?= @
 
+DEDUPE_SCRIPT := python3 maintainer-scripts/dedupe.py
+
 # If found, include config.mk for local settings
 -include config.mk
 
@@ -41,6 +43,17 @@ fixup:
 		-e 's:print_host =.*:print_host = :' \
 		-e 's:printhost_apikey =.*:printhost_apikey = :' \
 		$(sections)
+	
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_base.ini print__rpavlik_PETG-base.ini
+
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-medium.ini
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough.ini
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough_0.24_wip_1108.ini
+
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_base.ini print__rpavlik_PLA-base.ini
+
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PLA-base.ini print_rpavlik_PLA-medium.ini
+	$(QUIET)$(DEDUPE_SCRIPT) print__rpavlik_PLA-base.ini print_rpavlik_PLA-rough.ini
 
 help:
 	@echo "Targets:"
