@@ -27,15 +27,6 @@ sections := \
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
 
-help:
-	@echo "Targets:"
-	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
-	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
-	@echo "fixup: Remove personal data (postprocess script path, octoprint host and key) from section files"
-	@echo "Note:"
-	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
-	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
-
 all: $(bundle)
 clean:
 	-rm -f $(bundle) $(custom_bundle)
@@ -47,7 +38,17 @@ fixup:
 		-e 's:printhost_apikey =.*:printhost_apikey = :' \
 		$(sections)
 
-.PHONY: help all clean fixup
+help:
+	@echo "Targets:"
+	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
+	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
+	@echo "fixup: Remove personal data (postprocess script path, octoprint host and key) from section files"
+	@echo "Note:"
+	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
+	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
+	@echo "Pass QUIET= on the command line to show all commands being executed."
+
+.PHONY: all clean fixup help
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
@@ -62,7 +63,7 @@ customized: $(bundle) Makefile
 	$(QUIET)cat $< | \
 		sed \
 		-e 's:$(PLACEHOLDER_SCRIPT):$(strip $(SCRIPT_PATH)):' \
-		-e 's:print_host =.*:print_host = $(strip $(OCTOPRINT_HOST)):' \
+		-e 's%print_host =.*%print_host = $(strip $(OCTOPRINT_HOST))%' \
 		-e 's:printhost_apikey =.*:printhost_apikey = $(strip $(OCTOPRINT_KEY)):' \
 		> $(custom_bundle)
 all: customized
