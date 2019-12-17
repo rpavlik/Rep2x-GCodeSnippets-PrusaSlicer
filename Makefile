@@ -21,6 +21,7 @@ sections := \
 	$(SECTION_DIR)/print_rpavlik_PLA-rough.ini \
 	$(SECTION_DIR)/filament_PETG-AMZ-Basics-BLK.ini \
 	$(SECTION_DIR)/filament_PLA-PRO-eSun-COOLWHITE.ini \
+	$(SECTION_DIR)/filament_PLA-PRO-eSun-GLOW.ini \
 	$(printers) \
 	$(SECTION_DIR)/presets.ini
 
