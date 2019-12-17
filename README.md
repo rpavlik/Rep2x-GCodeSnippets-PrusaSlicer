@@ -42,6 +42,12 @@ For this to work, inside your WSL environment you must have a command `wslpath` 
 
 As a fallback for those Windows users who cannot use WSL, there is an alternative BAT script `simple_ffcp_postproc.bat` that can be used as post-processing script. It performs the two most essential functions of the `make_fcp_x3g` script, namely the tool temperature workaround and invoking GPX. It requires Perl to be installed, instructions are inside the file. This is only the bare minimum to use PrusaSlicer with the FFCP, it is much recommended to use the Bash script instead if you can.
 
+## Dev notes
+
+- Slic3r/PrusaSlicer placeholder reference:
+  - <http://mauk.cc/mediawiki/index.php/Slic3r_placeholders>
+  - <https://github.com/slic3r/Slic3r/wiki/FAQ#what-placeholders-can-i-use-in-custom-g-code>
+
 ## License
 
 These files are released under a Creative Commons Attribution 4.0 International license.
