@@ -2,15 +2,23 @@
 
 Based on the excellent work by dr-lex for the Flashforge Creator Pro - [See his website](https://www.dr-lex.be/software/ffcp-slic3r-profiles.html#config) for instructions on installing and using these files.
 
+TL;DR instructions to use the scripted, custom config bundle generation:
+
+- Remove the existing profiles from your PrusaSlicer install, if you imported an earlier version of this bundle.
+- Copy `config.sample.mk` to `config.mk` and edit it to point to the right `make_fcp_x3g` script location (and optionally octoprint server)
+- Run `make`
+- Import `Slic3r-configBundles/custom.ini` into PrusaSlicer.
+
 This repository contains three things:
 
 ## G-code snippets
 
-Use in combination with the profiles.
+Use in combination with the profiles. The makefile will automatically inject them into the config snippets, so don't modify GCode in the config snippets!
 
 ## PrusaSlicer config bundles
 
-The actual configuration bundles that can be imported into PrusaSlicer. Given that it is somewhat cumbersome to update the G-code snippets embedded inside these configs, it is possible they will not always be in sync with the latest commits to the actual snippets. In that case you should paste the snippets into the PrusaSlicer printer profiles to update them.
+The actual configuration bundles that can be imported into PrusaSlicer.
+Now with the script and makefile, the G-code snippets are automatically inserted into the configs.
 
 These configs and G-code are made specifically for PrusaSlicer. They might work in the original Slic3r from which PrusaSlicer was forked, but I give no guarantees.
 
