@@ -8,37 +8,52 @@ QUIET ?= @
 # If found, include config.mk for local settings
 -include config.mk
 
+bases := \
+	print__rpavlik_base.ini \
+	print__rpavlik_PETG-base.ini \
+	print__rpavlik_PLA-base.ini \
+	printer__Rep2x_base.ini \
+
 printers := \
-	$(SECTION_DIR)/printer__Rep2x_base.ini \
-	$(SECTION_DIR)/printer_Rep2x_dual_material_LR.ini \
-	$(SECTION_DIR)/printer_Rep2x_single_material_L.ini \
-	$(SECTION_DIR)/printer_Rep2x_single_material_R.ini
+	printer_Rep2x_dual_material_LR.ini \
+	printer_Rep2x_single_material_L.ini \
+	printer_Rep2x_single_material_R.ini
+
+pla_settings := \
+	print_rpavlik_PLA-medium.ini \
+	print_rpavlik_PLA-rough.ini \
+
+petg_settings := \
+	print_rpavlik_PETG-medium.ini \
+	print_rpavlik_PETG-rough.ini \
+	print_rpavlik_PETG-rough_0.24_wip_1108.ini \
+
+filaments := \
+	filament_PETG-AMZ-Basics-BLK.ini \
+	filament_PLA-PRO-eSun-COOLWHITE.ini \
+	filament_PLA-PRO-eSun-GLOW.ini \
 
 # presets.ini comes last, by convention.
 # Not sure if it's required.
 sections := \
 	$(SECTION_DIR)/lead.ini \
-	$(SECTION_DIR)/print__rpavlik_base.ini \
-	$(SECTION_DIR)/print__rpavlik_PETG-base.ini \
-	$(SECTION_DIR)/print_rpavlik_PETG-medium.ini \
-	$(SECTION_DIR)/print_rpavlik_PETG-rough.ini \
-	$(SECTION_DIR)/print_rpavlik_PETG-rough_0.24_wip_1108.ini \
-	$(SECTION_DIR)/print__rpavlik_PLA-base.ini \
-	$(SECTION_DIR)/print_rpavlik_PLA-medium.ini \
-	$(SECTION_DIR)/print_rpavlik_PLA-rough.ini \
-	$(SECTION_DIR)/filament_PETG-AMZ-Basics-BLK.ini \
-	$(SECTION_DIR)/filament_PLA-PRO-eSun-COOLWHITE.ini \
-	$(SECTION_DIR)/filament_PLA-PRO-eSun-GLOW.ini \
-	$(printers) \
+	$(addprefix $(SECTION_DIR)/,$(bases)) \
+	$(addprefix $(SECTION_DIR)/,$(petg_settings)) \
+	$(addprefix $(SECTION_DIR)/,$(pla_settings)) \
+	$(addprefix $(SECTION_DIR)/,$(filaments)) \
+	$(addprefix $(SECTION_DIR)/,$(printers)) \
 	$(SECTION_DIR)/presets.ini
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
+
 
 DEDUPE := python3 maintainer-scripts/dedupe.py
 
 all: $(bundle)
 clean:
 	-rm -f $(bundle) $(custom_bundle)
+
+
 fixup:
 	@echo "Stripping personal data from sections."
 	$(QUIET) sed -i \
@@ -48,22 +63,17 @@ fixup:
 		$(sections)
 
 	@echo "De-duplicating config settings from parent settings."
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PETG-base.ini
 
-	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-medium.ini
-	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough.ini
-	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini print_rpavlik_PETG-rough_0.24_wip_1108.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PETG-base.ini print__rpavlik_PLA-base.ini
 
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print__rpavlik_PLA-base.ini
+	# For multiple levels of inheritance, must go most-specialized to least-specialized
+	$(QUIET)$(DEDUPE) print__rpavlik_PETG-base.ini $(petg_settings)
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini $(petg_settings)
 
-	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini print_rpavlik_PLA-medium.ini
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print_rpavlik_PLA-medium.ini
-	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini print_rpavlik_PLA-rough.ini
-	$(QUIET)$(DEDUPE) print__rpavlik_base.ini print_rpavlik_PLA-rough.ini
+	$(QUIET)$(DEDUPE) print__rpavlik_PLA-base.ini $(pla_settings)
+	$(QUIET)$(DEDUPE) print__rpavlik_base.ini $(pla_settings)
 
-	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_single_material_L.ini
-	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_single_material_R.ini
-	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini printer_Rep2x_dual_material_LR.ini
+	$(QUIET)$(DEDUPE) printer__Rep2x_base.ini $(printers)
 
 help:
 	@echo "Targets:"
