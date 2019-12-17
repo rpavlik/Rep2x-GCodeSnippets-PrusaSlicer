@@ -9,6 +9,7 @@ QUIET ?= @
 -include config.mk
 
 printers := \
+	$(SECTION_DIR)/printer__Rep2x_base.ini \
 	$(SECTION_DIR)/printer_Rep2x_dual_material_LR.ini \
 	$(SECTION_DIR)/printer_Rep2x_single_material_L.ini \
 	$(SECTION_DIR)/printer_Rep2x_single_material_R.ini

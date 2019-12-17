@@ -6,17 +6,18 @@ SECTION_PATH = 'Slic3r-configBundles/sections/'
 GCODE_PATH = 'Slic3r-GCode/'
 
 FILE_DATA = {
+    'printer__Rep2x_base.ini': {
+        'end_gcode': 'End.gcode',
+    },
     'printer_Rep2x_dual_material_LR.ini': {
         'end_gcode': 'End.gcode',
         'start_gcode': 'Start-dual-extruders.gcode',
         'toolchange_gcode': 'ToolChange.gcode',
     },
     'printer_Rep2x_single_material_L.ini': {
-        'end_gcode': 'End.gcode',
         'start_gcode': 'Start-left-extruder.gcode',
     },
     'printer_Rep2x_single_material_R.ini': {
-        'end_gcode': 'End.gcode',
         'start_gcode': 'Start-right-extruder.gcode',
     },
 }
