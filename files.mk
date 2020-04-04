@@ -21,5 +21,6 @@ petg_settings := \
 
 filaments := \
 	filament_PETG-AMZ-Basics-BLK.ini \
+	filament_PETG-AMZ-Basics-BLK-autofan.ini \
 	filament_PLA-PRO-eSun-COOLWHITE.ini \
 	filament_PLA-PRO-eSun-GLOW.ini \
