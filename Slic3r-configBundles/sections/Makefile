@@ -34,3 +34,7 @@ split_stamp $(SUPERBASE) $(UPDATED_BASES): PrusaSlicer_config_bundle.ini
 
 $(petg_settings): split_stamp
 	$(QUIET)$(DEDUPE) --base print__rpavlik_base.ini print__rpavlik_PETG-base.ini  --derived $@
+
+just-split: PrusaSlicer_config_bundle.ini
+	$(QUIET)$(SCRIPT_DIR)/split.py $<
+.PHONY: just-split
