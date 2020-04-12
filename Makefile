@@ -57,11 +57,21 @@ fixup:
 
 	$(QUIET)$(DEDUPE) --base printer__Rep2x_base.ini --derived $(printers)
 
+fixup-wildcard: fixup
+	$(QUIET)$(DEDUPE) \
+		--base print__rpavlik_base.ini print__rpavlik_PLA-base.ini \
+		--derived $(wildcard $(SECTION_DIR)/print_rpavlik_PLA*.ini)
+	$(QUIET)$(DEDUPE) \
+		--base print__rpavlik_base.ini print__rpavlik_PETG-base.ini \
+		--derived $(wildcard $(SECTION_DIR)/print_rpavlik_PETG*.ini)
+
 help:
 	@echo "Targets:"
 	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
 	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
 	@echo "fixup: Clean up sections: Remove personal data (postprocess script path, octoprint host and key), deduplicate, etc."
+	@echo "fixup-wildcard: fixup, plus fixup all sections with the right name, not just the ones listed in the makefile."
+	@echo "update: split without intersect, then fixup-wildcard"
 	@echo "split: Split $(SECTION_DIR)/PrusaSlicer_config_bundle.ini into sections."
 	@echo "Note:"
 	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
@@ -69,7 +79,7 @@ help:
 	@echo "You can do this on the command line, or (preferably) in a config.mk file."
 	@echo "Pass QUIET= on the command line to show all commands being executed."
 
-.PHONY: all clean fixup help split
+.PHONY: all clean fixup help split fixup-wildcard update
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
@@ -78,6 +88,10 @@ $(bundle): $(sections) Makefile
 
 split: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
 	$(MAKE) -C $(SECTION_DIR)
+
+update: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
+	$(MAKE) -C $(SECTION_DIR) just-split
+	$(MAKE) fixup-wildcard
 
 ifneq (,$(strip $(SCRIPT_PATH)))
 # Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
