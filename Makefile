@@ -77,7 +77,7 @@ $(bundle): $(sections) Makefile
 	$(QUIET)cat $(sections) > $@
 
 split: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
-	$(MAKE) -C $(SECTION_DIR) split
+	$(MAKE) -C $(SECTION_DIR)
 
 ifneq (,$(strip $(SCRIPT_PATH)))
 # Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
