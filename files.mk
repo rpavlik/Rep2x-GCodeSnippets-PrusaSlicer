@@ -20,6 +20,7 @@ petg_settings := \
 	print_rpavlik_PETG-rough_0.28.ini \
 
 filaments := \
+	filament_FLEX-YOYI-TEAL.ini \
 	filament_PETG-AMZ-Basics-BLK.ini \
 	filament_PETG-AMZ-Basics-BLK-autofan.ini \
 	filament_PETG-eSun-BLK.ini \
