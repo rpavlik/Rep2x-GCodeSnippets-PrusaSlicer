@@ -62,19 +62,22 @@ help:
 	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
 	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
 	@echo "fixup: Clean up sections: Remove personal data (postprocess script path, octoprint host and key), deduplicate, etc."
+	@echo "split: Split $(SECTION_DIR)/PrusaSlicer_config_bundle.ini into sections."
 	@echo "Note:"
 	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
 	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
 	@echo "You can do this on the command line, or (preferably) in a config.mk file."
 	@echo "Pass QUIET= on the command line to show all commands being executed."
 
-.PHONY: all clean fixup help
+.PHONY: all clean fixup help split
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
 	@echo "Generating bundle: $@"
 	$(QUIET)cat $(sections) > $@
 
+split: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
+	$(MAKE) -C $(SECTION_DIR) split
 
 ifneq (,$(strip $(SCRIPT_PATH)))
 # Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
