@@ -11,6 +11,9 @@ QUIET ?= @
 # Include file lists
 include files.mk
 
+# Command defs for cross-platform compat.
+include commands.mk
+
 # presets.ini comes last, by convention.
 # Not sure if it's required.
 sections := \
@@ -24,24 +27,24 @@ sections := \
 
 GCODE_SCRIPT := maintainer-scripts/inject-gcode.py
 
-DEDUPE := python3 maintainer-scripts/dedupe.py
+DEDUPE := $(PYTHON) maintainer-scripts/dedupe.py
 
 PRINTER_FILES := $(addprefix $(SECTION_DIR)/,$(printers))
 
 all: $(bundle)
 clean:
-	-rm -f $(bundle) $(custom_bundle)
+	-$(RM) $(bundle) $(custom_bundle)
 
 
 fixup:
-	@echo "Stripping personal data from sections."
-	$(QUIET) sed -i \
+	@$(ECHO) "Stripping personal data from sections."
+	$(QUIET) $(SED) -i \
 		-e 's:post_process =.*:post_process = $(PLACEHOLDER_SCRIPT):' \
 		-e 's:print_host =.*:print_host = :' \
 		-e 's:printhost_apikey =.*:printhost_apikey = :' \
 		$(sections)
 
-	@echo "De-duplicating config settings from parent settings."
+	@$(ECHO) "De-duplicating config settings from parent settings."
 
 	$(QUIET)$(DEDUPE) \
 		--base print__rpavlik_base.ini \
@@ -66,25 +69,25 @@ fixup-wildcard: fixup
 		--derived $(wildcard $(SECTION_DIR)/print_rpavlik_PETG*.ini)
 
 help:
-	@echo "Targets:"
-	@echo "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
-	@echo "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
-	@echo "fixup: Clean up sections: Remove personal data (postprocess script path, octoprint host and key), deduplicate, etc."
-	@echo "fixup-wildcard: fixup, plus fixup all sections with the right name, not just the ones listed in the makefile."
-	@echo "update: split without intersect, then fixup-wildcard"
-	@echo "split: Split $(SECTION_DIR)/PrusaSlicer_config_bundle.ini into sections."
-	@echo "Note:"
-	@echo "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
-	@echo "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
-	@echo "You can do this on the command line, or (preferably) in a config.mk file."
-	@echo "Pass QUIET= on the command line to show all commands being executed."
+	@$(ECHO) "Targets:"
+	@$(ECHO) "all: Build the bundle $(bundle), and custom bundle $(custom_bundle) if SCRIPT_PATH supplied"
+	@$(ECHO) "clean: Remove the bundle $(bundle) and custom bundle $(custom_bundle)"
+	@$(ECHO) "fixup: Clean up sections: Remove personal data (postprocess script path, octoprint host and key), deduplicate, etc."
+	@$(ECHO) "fixup-wildcard: fixup, plus fixup all sections with the right name, not just the ones listed in the makefile."
+	@$(ECHO) "update: split without intersect, then fixup-wildcard"
+	@$(ECHO) "split: Split $(SECTION_DIR)/PrusaSlicer_config_bundle.ini into sections."
+	@$(ECHO) "Note:"
+	@$(ECHO) "If you define SCRIPT_PATH, you'll get a customized bundle containing your script path,"
+	@$(ECHO) "as well as your OCTOPRINT_HOST and OCTOPRINT_KEY if specified."
+	@$(ECHO) "You can do this on the command line, or (preferably) in a config.mk file."
+	@$(ECHO) "Pass QUIET= on the command line to show all commands being executed."
 
 .PHONY: all clean fixup help split fixup-wildcard update
 
 # Combine all the sections
 $(bundle): $(sections) Makefile
-	@echo "Generating bundle: $@"
-	$(QUIET)cat $(sections) > $@
+	@$(ECHO) "Generating bundle: $@"
+	$(QUIET)$(CAT) $(sections) > $@
 
 split: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
 	$(MAKE) -C $(SECTION_DIR)
@@ -96,9 +99,9 @@ update: $(SECTION_DIR)/PrusaSlicer_config_bundle.ini
 ifneq (,$(strip $(SCRIPT_PATH)))
 # Do a replacement of the post-processor path if SCRIPT_PATH is defined to something useful
 customized: $(bundle) Makefile
-	@echo "Generating bundle with customized post-process path, etc: $(custom_bundle)"
-	$(QUIET)cat $< | \
-		sed \
+	@$(ECHO) "Generating bundle with customized post-process path, etc: $(custom_bundle)"
+	$(QUIET)$(CAT) $< | \
+		$(SED) \
 		-e 's:$(PLACEHOLDER_SCRIPT):$(strip $(SCRIPT_PATH)):' \
 		-e 's%print_host =.*%print_host = $(strip $(OCTOPRINT_HOST))%' \
 		-e 's:printhost_apikey =.*:printhost_apikey = $(strip $(OCTOPRINT_KEY)):' \
@@ -112,5 +115,5 @@ endif
 GCODES := $(wildcard Slic3r-GCode/*.gcode)
 
 $(PRINTER_FILES) : $(SECTION_DIR)/printer_%.ini : $(GCODE_SCRIPT) $(GCODES)
-	@echo "Injecting GCode snippets into: $@"
-	$(QUIET)python3 $(GCODE_SCRIPT) $(@F)
+	@$(ECHO) "Injecting GCode snippets into: $@"
+	$(QUIET)$(PYTHON) $(GCODE_SCRIPT) $(@F)
