@@ -10,20 +10,35 @@ TL;DR instructions to use the scripted, custom config bundle generation:
 - Run `make`
 - Import `Slic3r-configBundles/custom.ini` into PrusaSlicer.
 
+## Dependencies
+
+For config bundle generation on Windows, use [scoop](https://scoop.sh) to
+install the packages `busybox` `make` and `python`.
+
+If you want to use `make_fcp_x3g` on Windows without WSL (not fully tested),
+you'll also need `perl`, `gpx`, and `unxutils` installed. You may need to run
+`scoop reset make` and `scoop reset busybox` after installing `unxutils` for
+this to work.
+
+On Linux, you will need bash, make, python3, perl, bc, and gpx. You're likely to
+already have all these installed except for gpx.
+
+## Contents
+
 This repository contains three things:
 
-## G-code snippets
+### G-code snippets
 
 Use in combination with the profiles. The makefile will automatically inject them into the config snippets, so don't modify GCode in the config snippets!
 
-## PrusaSlicer config bundles
+### PrusaSlicer config bundles
 
 The actual configuration bundles that can be imported into PrusaSlicer.
 Now with the script and makefile, the G-code snippets are automatically inserted into the configs.
 
 These configs and G-code are made specifically for PrusaSlicer. They might work in the original Slic3r from which PrusaSlicer was forked, but I give no guarantees.
 
-## The *make_fcp_x3g* script
+### The *make_fcp_x3g* script
 
 This script can be configured as a post-processing script in PrusaSlicer to run specific post-processing scripts and finally generate an X3G file by invoking [GPX](https://github.com/markwal/GPX).
 
