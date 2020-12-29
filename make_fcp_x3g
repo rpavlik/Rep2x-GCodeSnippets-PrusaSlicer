@@ -302,13 +302,13 @@ if [ -z "${no_postproc}" ]; then
 	if [ -z "${highest_z}" ]; then
 		echo 'WARNING: could not find highest Z coordinate. If this is a valid G-code file, the make_fcp_x3g script needs updating.' >> "${warn_file}"
 	else
-		if (( $(echo "${highest_z} > ${Z_MAX}" | bc -l) )); then
+		if [ $(echo "${highest_z} > ${Z_MAX}" | bc -l) -eq 1 ]; then
 			echo "WARNING: Z coordinates in this file exceed the maximum: ${highest_z} > ${Z_MAX}. This print will likely end in disaster." >> "${warn_file}"
 		fi
 		# Find the current final G1 command, its Z value, and transform it if we need to go higher.
 		final_move=$(grep "^G1 .*${FINAL_Z_MOVE}" "${inputfile}")
-		final_z=$(perl -pe 's/^G1 [^;]*Z(\d*\.?\d+).*$/$1/i' <<< "${final_move}")
-		if (( $(echo "${highest_z} > ${final_z}" | bc -l) )); then
+		final_z=$(echo "${final_move}" | perl -pe 's/^G1 [^;]*Z(\d*\.?\d+).*$/$1/i')
+		if [ $(echo "${highest_z} > ${final_z}" | bc -l) -eq 1 ]; then
 			# I know this looks horrible but all it does is replacing the Z coordinate with the new one.
 			perl -pi.trashme -e 's/^(G1 [^;]*)Z\d*\.?\d+(.*\Q'"${FINAL_Z_MOVE}"'\E.*)$/$1Z'"${highest_z}"'$2 ; EXTENDED!/i' "${inputfile}"
 			rm -f "${inputfile}.trashme"
